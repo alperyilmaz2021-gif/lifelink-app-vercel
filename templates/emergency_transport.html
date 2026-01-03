@@ -1,0 +1,14 @@
+
+{% extends "_base.html" %}{% block content %}
+<div class="container section">
+  <form class="card form" method="post" action="{{ url_for('emergency_transport') }}">
+    <b>Emergency Transport Request</b>
+    <input name="hospital" placeholder="Hospital Name" required>
+    <input name="organ_type" placeholder="Organ Type (e.g., Heart)" required>
+    <input name="origin" placeholder="Origin City, State" required>
+    <input name="destination" placeholder="Destination City, State" required>
+    <textarea name="notes" placeholder="Urgency notes"></textarea>
+    <button class="btn emergency">Submit Emergency Request</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "_base.html" %}{% block content %}
+<div class="container section">
+  <h2 class="h2">Order Confirmation</h2>
+  <p class="sub">Your request has been recorded. Below are the full order details.</p>
+
+  <div class="card">
+    <h3>Order #{{ order.id }}</h3>
+    <div class="grid-2">
+      <div class="small">
+        <b>Organ</b>
+        <div>{{ order.organ_type or order.listing_organ_type }} · Blood type {{ order.listing_blood_type }}</div>
+        <div>Priority: {{ order.priority_status or order.listing_priority_status }}</div>
+        <div>Status: {{ order.status }}</div>
+      </div>
+      <div class="small">
+        <b>Locations</b>
+        <div>Pick-up: {{ order.origin }}</div>
+        <div>Delivery: {{ order.destination }}</div>
+      </div>
+    </div>
+    <div class="grid-2" style="margin-top:8px">
+      <div class="small">
+        <b>Timestamps</b>
+        <div>Created: {{ created_local }}</div>
+        <div>Last updated: {{ updated_local }}</div>
+      </div>
+      <div class="small">
+        <b>Driver</b>
+        {% if order.driver_name %}
+          <div>{{ order.driver_name }} · {{ order.driver_phone }}</div>
+        {% else %}
+          <div>No driver has been assigned yet.</div>
+        {% endif %}
+      </div>
+    </div>
+    {% if order.notes %}
+      <div class="small" style="margin-top:8px">
+        <b>Notes:</b>
+        <div>{{ order.notes }}</div>
+      </div>
+    {% endif %}
+    <div style="margin-top:12px">
+      <a class="btn" href="{{ url_for('for_hospitals') }}">Back to Hospital Portal</a>
+      <a class="btn" href="{{ url_for('organ_listings') }}">Back to Organ Listings</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "_base.html" %}{% block content %}
+<div class="hero"><div class="container">
+  <h1>Saving Lives Through<br><span class="accent">Rapid Organ Transport</span></h1>
+  <p>Connecting hospitals worldwide with our certified driver network for time-critical organ transportation. Every second counts in saving lives.</p>
+  <div style="display:flex;gap:12px;margin-top:14px">
+    <a class="btn emergency" href="{{ url_for('emergency_transport') }}">Emergency Transport</a>
+    <a class="btn" href="{{ url_for('hospital_registration') }}">Hospital Registration</a>
+  </div>
+  <div class="kpis"><div>24/7</div><div>500+ Partners</div><div>1000+ Lives</div><div>99.9% Success</div></div>
+</div></div>
+<div class="section container">
+  <h2 class="h2">Our Services</h2>
+  <p class="sub">Comprehensive organ transport solutions designed for hospitals and transplant centers.</p>
+  <div class="grid">
+    <div class="card feature"><div class="icon">⏱</div><div><b>24/7 Emergency Dispatch</b><div class="small">Immediate response for critical cases.</div></div></div>
+    <div class="card feature"><div class="icon">🛡</div><div><b>Clinical-Grade Handling</b><div class="small">Professionals trained in organ handling protocols.</div></div></div>
+    <div class="card feature"><div class="icon">📍</div><div><b>Real-Time Tracking</b><div class="small">GPS tracking and live updates throughout.</div></div></div>
+    <div class="card feature"><div class="icon">💬</div><div><b>Coordinated Communication</b><div class="small">Secure messaging between hospitals and teams.</div></div></div>
+    <div class="card feature"><div class="icon">❤️</div><div><b>Organ Listings</b><div class="small">Available organs database with specifications.</div></div></div>
+    <div class="card feature"><div class="icon">🏥</div><div><b>Hospital Network</b><div class="small">Extensive partner hospitals for seamless sharing.</div></div></div>
+  </div>
+</div>
+<div class="section container">
+  <h2 class="h2">How It Works</h2>
+  <p class="sub">Simple steps to save lives</p>
+  <div class="grid" style="grid-template-columns:repeat(3,1fr)">
+    <div class="card"><b>1. Request Transport</b><div class="small">Hospital submits a transport request.</div></div>
+    <div class="card"><b>2. Match & Dispatch</b><div class="small">We match nearest certified driver and dispatch.</div></div>
+    <div class="card"><b>3. Safe Delivery</b><div class="small">Real-time tracking ensures timely organ delivery.</div></div>
+  </div>
+</div>
+{% endblock %}

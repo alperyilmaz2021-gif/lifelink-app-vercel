@@ -1,0 +1,118 @@
+{% extends "_base.html" %}{% block content %}
+<div class="container section" style="display:grid;grid-template-columns:1.1fr .9fr;gap:24px">
+  <div>
+    <h2 class="h2" style="text-align:left">Driver Portal</h2>
+    <p class="sub" style="text-align:left">Select a driver to view their current status and claim available orders. Each driver can work on only one active order at a time.</p>
+
+    <form method="get" style="margin:12px 0 18px;max-width:360px">
+      <label class="small">Driver</label>
+      <select name="driver_id" onchange="this.form.submit()">
+        {% for d in drivers %}
+          <option value="{{ d.id }}" {% if selected_driver and d.id == selected_driver.id %}selected{% endif %}>
+            {{ d.first_name }} {{ d.last_name }} ({{ d.phone }})
+          </option>
+        {% endfor %}
+      </select>
+    </form>
+
+    <div class="card">
+      <b>Driver Status</b>
+      {% if not selected_driver %}
+        <div class="small" style="margin-top:8px">No drivers registered yet. Use the form on the right to register.</div>
+      {% else %}
+        <div class="small" style="margin-top:8px">
+          <div><b>{{ selected_driver.first_name }} {{ selected_driver.last_name }}</b></div>
+          <div>{{ selected_driver.phone }} · {{ selected_driver.email }}</div>
+        </div>
+        <div class="divider" style="margin:8px 0"></div>
+        <div>
+          <b>Current active order</b>
+          {% if current_order %}
+            <div class="card small" style="margin-top:6px">
+              <div><b>Order #{{ current_order.id }}</b> · {{ current_order.organ_type or current_order.listing_organ_type }}</div>
+              <div class="small">{{ current_order.origin }} → {{ current_order.destination }}</div>
+              <div class="small">Status: {{ current_order.status }} · Priority: {{ current_order.priority_status }}</div>
+              <div class="small">Last update: {{ to_local_str(current_order.updated_at) }}</div>
+              <form method="post" action="{{ url_for('driver_update_status', order_id=current_order.id) }}" style="margin-top:6px;display:flex;gap:8px;align-items:center">
+                <input type="hidden" name="driver_id" value="{{ selected_driver.id }}">
+                <select name="status">
+                  <option value="Assigned" {% if current_order.status == 'Assigned' %}selected{% endif %}>Assigned</option>
+                  <option value="En-route" {% if current_order.status == 'En-route' %}selected{% endif %}>En-route</option>
+                  <option value="Delivered" {% if current_order.status == 'Delivered' %}selected{% endif %}>Delivered</option>
+                  <option value="Requested">Revert to Requested</option>
+                </select>
+                <button class="btn small" type="submit">Update</button>
+              </form>
+            </div>
+          {% else %}
+            <div class="small" style="margin-top:6px">No active order assigned.</div>
+          {% endif %}
+        </div>
+        <div class="divider" style="margin:12px 0"></div>
+        <div>
+          <b>Recently completed</b>
+          {% if completed_orders %}
+            {% for o in completed_orders %}
+              <div class="card small" style="margin-top:6px">
+                <div><b>Order #{{ o.id }}</b> · {{ o.organ_type or o.listing_organ_type }}</div>
+                <div class="small">{{ o.origin }} → {{ o.destination }}</div>
+                <div class="small">Status: {{ o.status }} · Completed at: {{ to_local_str(o.updated_at) }}</div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="small" style="margin-top:6px">No completed orders yet.</div>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <b>Available Orders</b>
+      <div class="small" style="margin-bottom:8px">Orders are sorted by priority (Emergency → Urgent → Critical → Normal) and then by earliest request time.</div>
+      <div class="divider" style="margin:8px 0"></div>
+      {% if available_orders %}
+        {% for j in available_orders %}
+          <div class="row" style="grid-template-columns:1fr 150px">
+            <div class="small">
+              <div><b>Order #{{ j.id }}</b> · {{ j.organ_type or j.listing_organ_type }}</div>
+              <div>{{ j.origin }} → {{ j.destination }}</div>
+              <div>Priority: {{ j.priority_status }} · Requested: {{ to_local_str(j.created_at) }}</div>
+            </div>
+            <div style="text-align:right">
+              {% if selected_driver %}
+                <form method="post" action="{{ url_for('driver_claim', order_id=j.id) }}">
+                  <input type="hidden" name="driver_id" value="{{ selected_driver.id }}">
+                  <button class="btn small primary" type="submit">Claim</button>
+                </form>
+              {% else %}
+                <button class="btn small" type="button" disabled>Register first</button>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="small">No available orders at the moment.</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div>
+    <div class="card">
+      <b>Driver Registration</b>
+      <p class="small">No password is required. Register once and then select your name from the dropdown on the left.</p>
+      <form class="form" method="post" action="{{ url_for('apply_driver') }}">
+        <div class="grid-2">
+          <input name="first_name" placeholder="First name" required>
+          <input name="last_name" placeholder="Last name" required>
+        </div>
+        <div class="grid-2">
+          <input name="email" placeholder="Email" required>
+          <input name="phone" placeholder="Phone" required>
+        </div>
+        <input name="cdl" placeholder="CDL / License details" required>
+        <button class="btn primary" type="submit">Register Driver</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

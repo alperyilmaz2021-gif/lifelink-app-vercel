@@ -1,0 +1,17 @@
+
+{% extends "_base.html" %}{% block content %}
+<div class="container section">
+  <form class="card form" method="post" action="{{ url_for('hospital_registration') }}">
+    <b>Register Your Hospital</b>
+    <div class="grid-2">
+      <input name="name" placeholder="Hospital Name" required>
+      <input name="city" placeholder="City" required>
+    </div>
+    <div class="grid-2">
+      <input name="state" placeholder="State" required>
+      <input name="email" placeholder="Contact Email" required>
+    </div>
+    <button class="btn primary">Register</button>
+  </form>
+</div>
+{% endblock %}

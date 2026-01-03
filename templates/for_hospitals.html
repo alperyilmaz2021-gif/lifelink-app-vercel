@@ -1,0 +1,78 @@
+{% extends "_base.html" %}{% block content %}
+<div class="container section">
+  <h2 class="h2" style="text-align:left">Hospital Portal</h2>
+  <p class="sub" style="text-align:left">Select a registered hospital to view its outbound and inbound requests, and manage its own organ listings.</p>
+
+  <form method="get" style="margin:12px 0 18px;max-width:420px">
+    <label class="small">Hospital</label>
+    <select name="hospital_id" onchange="this.form.submit()">
+      {% for h in hospitals %}
+        <option value="{{ h.id }}" {% if selected_hospital and h.id == selected_hospital.id %}selected{% endif %}>
+          {{ h.name }} ({{ h.city }}, {{ h.state }})
+        </option>
+      {% endfor %}
+    </select>
+  </form>
+
+  {% if not selected_hospital %}
+    <div class="notice">No hospitals are registered yet. Use the Hospital Registration page to add one.</div>
+  {% else %}
+    <div class="grid" style="grid-template-columns:1.1fr .9fr;gap:24px">
+      <div>
+        <div class="card">
+          <h3>Outbound Requests (from {{ selected_hospital.name }})</h3>
+          {% if outbound %}
+            {% for o in outbound %}
+              <div class="card small" style="margin-top:8px">
+                <div><b>Order #{{ o.id }}</b> · {{ o.organ_type or o.listing_organ_type }}</div>
+                <div class="small">Destination: {{ o.destination }}</div>
+                <div class="small">Status: {{ o.status }} · Priority: {{ o.priority_status }}</div>
+                <div class="small">Created: {{ o.created_at }}</div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="small">No outbound requests yet.</div>
+          {% endif %}
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <h3>Inbound Requests (to {{ selected_hospital.name }})</h3>
+          {% if inbound %}
+            {% for o in inbound %}
+              <div class="card small" style="margin-top:8px">
+                <div><b>Order #{{ o.id }}</b> · {{ o.organ_type or o.listing_organ_type }}</div>
+                <div class="small">Requesting hospital: {{ o.hospital }}</div>
+                <div class="small">Status: {{ o.status }} · Priority: {{ o.priority_status }}</div>
+                <div class="small">Created: {{ o.created_at }}</div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="small">No inbound requests yet.</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h3>Organ Listings at {{ selected_hospital.name }}</h3>
+          {% if listings %}
+            {% for l in listings %}
+              <div class="card small" style="margin-top:8px">
+                <div><b>{{ l.organ_type }}</b> · {{ l.blood_type }}</div>
+                <div class="small">Age: {{ l.age }} yrs · Weight: {{ "%.1f"|format(l.weight_kg or 0) }} kg</div>
+                <div class="small">Priority: {{ l.priority_status }} · Availability: {{ l.availability_status }}</div>
+                <div class="small">Created: {{ l.created_at }}</div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="small">No organ listings yet for this hospital.</div>
+          {% endif %}
+          <div style="display:flex;gap:12px;margin-top:12px">
+            <a class="btn primary" href="{{ url_for('new_listing', hospital_id=selected_hospital.id) }}">New Listing</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
